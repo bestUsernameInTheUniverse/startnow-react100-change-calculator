@@ -7,6 +7,7 @@ class App extends Component {
     this.state = {
       amountDue: 0,
       amountReceived: 0,
+      changeDue: 0,
       isEnough: true,
       twenties: 0,
       tens: 0,
@@ -56,14 +57,14 @@ class App extends Component {
   successAlert() {
     return (
       <div className="alert alert-success text-center" role="alert">
-        The total change due is ${100.00}
+        The total change due is ${this.state.changeDue}
       </div>
     );
   }
 
 
   failureAlert() {
-    return (
+    return(
       <div className="alert alert-danger text-center" role="alert">
         Additional money owed.
       </div>
@@ -72,12 +73,30 @@ class App extends Component {
 
 
   handleAmountDueChange(event) {
-    this.setState({ amountDue: event.target.value });
+    var amountDue = event.target.value;
+    var amountReceived = this.state.amountReceived;
+    var changeNeeded = parseFloat(amountReceived) - parseFloat(amountDue);
+    var isEnough = changeNeeded < 0 ? false : true;
+
+    this.setState({ 
+      amountDue: amountDue,
+      changeDue: changeNeeded,
+      isEnough: isEnough
+    });
   }
 
 
   handleAmountReceivedChange(event) {
-    this.setState({ amountReceived: event.target.value });
+    var amountDue = this.state.amountDue;
+    var amountReceived = event.target.value;
+    var changeNeeded = parseFloat(amountReceived) - parseFloat(amountDue);
+    var isEnough = changeNeeded < 0 ? false : true;
+
+    this.setState({ 
+      amountReceived: amountReceived,
+      changeDue: changeNeeded,
+      isEnough: isEnough
+    });
   }
 
 
@@ -90,10 +109,7 @@ class App extends Component {
     var remainingChange =  amountReceived - amountDue;
     var twenties, tens, fives, ones, quarters, dimes, nickles, pennies;
 
-    if(remainingChange < 0) {
-      this.setState({ isEnough: false });
-      return;
-    }
+    if(remainingChange < 0) { return; } //
     
     twenties = Math.floor(remainingChange/20);
     remainingChange -= twenties * 20;
@@ -133,11 +149,11 @@ class App extends Component {
 
 
   render() {
-    let alert = null;
+    let alertThing = null;
     if(this.state.isEnough) {
-      alert = this.successAlert();
+      alertThing = this.successAlert();
     } else {
-      alert = this.failureAlert();
+      alertThing = this.failureAlert();
     }
 
     return (
@@ -200,7 +216,7 @@ class App extends Component {
           <div className="col-md-8">
             <div className="card">
               <div className="card-body">
-                {alert}
+                {alertThing}
 
                 <div className="row">
                   {this.makeGrid()}

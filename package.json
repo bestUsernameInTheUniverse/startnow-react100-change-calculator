@@ -4,7 +4,7 @@
   "description": "REACT100 Assignment - Change Calculator",
   "main": "server/index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -w",
     "start": "webpack && node server/index.js",
     "lint": "eslint .",
     "test": "npm run build && mocha test/.setup.js test/*.spec.js"
